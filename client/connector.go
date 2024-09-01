@@ -59,7 +59,7 @@ func NewConnector(ctx context.Context, cfg *v1.ClientCommonConfig) Connector {
 	}
 }
 
-func (c *defaultConnectorImpl) getAddr(oaddr, oport int) (addr string, port string) {
+func (c *defaultConnectorImpl) getAddr(oaddr string, oport int) (addr string, port string) {
 	if hasDNS(oaddr) {
 		return lookupTXT(oaddr)
 	}
