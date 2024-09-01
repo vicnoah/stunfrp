@@ -59,6 +59,14 @@ func NewConnector(ctx context.Context, cfg *v1.ClientCommonConfig) Connector {
 	}
 }
 
+func (c *defaultConnectorImpl) getAddr(oaddr, oport int) (addr string, port string) {
+	if hasDNS(oaddr) {
+		return lookupTXT(oaddr)
+	}
+
+	return oaddr, strconv.Itoa(oport)
+}
+
 // Open opens an underlying connection to the server.
 // The underlying connection is either a TCP connection or a QUIC connection.
 // After the underlying connection is established, you can call Connect() to get a stream.
@@ -91,7 +99,7 @@ func (c *defaultConnectorImpl) Open() error {
 
 		conn, err := quic.DialAddr(
 			c.ctx,
-			net.JoinHostPort(c.cfg.ServerAddr, strconv.Itoa(c.cfg.ServerPort)),
+			net.JoinHostPort(c.getAddr(c.cfg.ServerAddr, c.cfg.ServerPort)),
 			tlsConfig, &quic.Config{
 				MaxIdleTimeout:     time.Duration(c.cfg.Transport.QUIC.MaxIdleTimeout) * time.Second,
 				MaxIncomingStreams: int64(c.cfg.Transport.QUIC.MaxIncomingStreams),
@@ -208,7 +216,7 @@ func (c *defaultConnectorImpl) realConnect() (net.Conn, error) {
 	)
 	conn, err := libnet.DialContext(
 		c.ctx,
-		net.JoinHostPort(c.cfg.ServerAddr, strconv.Itoa(c.cfg.ServerPort)),
+		net.JoinHostPort(c.getAddr(c.cfg.ServerAddr, c.cfg.ServerPort)),
 		dialOptions...,
 	)
 	return conn, err
