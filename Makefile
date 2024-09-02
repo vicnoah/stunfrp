@@ -2,7 +2,8 @@ export PATH := $(PATH):`go env GOPATH`/bin
 export GO111MODULE=on
 LDFLAGS := -s -w
 
-all: env fmt build
+# all: env fmt build
+all: env build
 
 build: frps frpc
 
