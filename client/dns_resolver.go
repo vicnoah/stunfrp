@@ -3,6 +3,8 @@ package client
 import (
 	"context"
 	"net"
+
+	"github.com/duke-git/lancet/v2/validator"
 )
 
 // hasDNS checks if the provided name is a valid domain name format.
@@ -13,8 +15,8 @@ func hasDNS(name string) bool {
 	}
 
 	// Try to resolve the name to see if it's a valid domain
-	_, err := net.LookupHost(name)
-	return err == nil
+	isdns := validator.IsDns(name)
+	return isdns
 }
 
 func lookupTXT(name string) (string, string) {
