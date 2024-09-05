@@ -64,6 +64,10 @@ func (c *defaultConnectorImpl) getAddr(oaddr string, oport int) (addr string, po
 		return lookupTXT(oaddr)
 	}
 
+	if hasUrl(oaddr) {
+		return discoveryWithUrl(oaddr)
+	}
+
 	return oaddr, strconv.Itoa(oport)
 }
 
